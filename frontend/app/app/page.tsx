@@ -1,5 +1,5 @@
 "use client";
-import useWeb3Auth from "@/hooks/use-web3auth";
+import useWeb3Auth from "@/hooks/use-web3";
 import { useState } from "react";
 import { ADAPTER_EVENTS, WALLET_ADAPTERS } from "@web3auth/base";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";

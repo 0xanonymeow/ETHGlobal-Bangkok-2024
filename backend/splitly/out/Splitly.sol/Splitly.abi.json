@@ -1,9 +1,4 @@
-"use client";
-
-import useWeb3Auth from "@/hooks/use-web3";
-import { useEffect, useState } from "react";
-
-const abi = `[
+[
   {
     "type": "constructor",
     "inputs": [],
@@ -304,28 +299,4 @@ const abi = `[
       }
     ]
   }
-]`;
-
-export default function Pay({ params }: { params: Promise<{ slug: string }> }) {
-  const [bill, setBill] = useState<any>(null);
-  const { publicClient } = useWeb3Auth();
-  const onGetBill = async (id: bigint) => {
-    const bill = await publicClient.readContract({
-      address: "0xcbFBF5Ec24c3564e7bC8F8ED3a77f0BD70514545",
-      abi: JSON.parse(abi),
-      functionName: "getBillDetail",
-      args: [id],
-    });
-    setBill(bill);
-    alert(bill);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const id = (await params).slug;
-      onGetBill(BigInt(id));
-    })();
-  }, [params]);
-
-  return <div>Pay {bill}</div>;
-}
+]

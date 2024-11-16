@@ -11,6 +11,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
+    "@web3auth/account-abstraction-provider": "^9.4.0",
     "@web3auth/auth-adapter": "^9.4.0",
     "@web3auth/base": "^9.4.0",
     "@web3auth/ethereum-provider": "^9.4.0",
@@ -26,6 +27,7 @@
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "viem": "^2.21.45",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

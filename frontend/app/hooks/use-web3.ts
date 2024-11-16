@@ -1,8 +1,14 @@
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { CHAIN_NAMESPACES } from "@web3auth/base";
+import { CHAIN_NAMESPACES, IProvider } from "@web3auth/base";
 import { Web3Auth } from "@web3auth/modal";
 import { WEB3AUTH_NETWORK } from "@web3auth/base";
 import { AuthAdapter } from "@web3auth/auth-adapter";
+import {
+  AccountAbstractionProvider,
+  SafeSmartAccount,
+} from "@web3auth/account-abstraction-provider";
+import { createPublicClient, createWalletClient, custom, http } from "viem";
+import { sepolia } from "viem/chains";
 
 export default function useWeb3Auth() {
 
@@ -19,6 +25,24 @@ const chainConfig = {
   logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
 };
 
+const accountAbstractionProvider = new AccountAbstractionProvider({
+  config: {
+    chainConfig,
+    smartAccountInit: new SafeSmartAccount(),
+    bundlerConfig: {
+      // Get the pimlico API Key from dashboard.pimlico.io
+      url: `https://api.pimlico.io/v2/11155111/rpc?apikey=pim_MjKvzAhH5LJcMVu7L3jMtg`,
+      paymasterContext: {
+        token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC Sepolia
+      },
+    },
+    paymasterConfig: {
+      // Get the pimlico API Key from dashboard.pimlico.io
+      url: `https://api.pimlico.io/v2/11155111/rpc?apikey=pim_MjKvzAhH5LJcMVu7L3jMtg`,
+    },
+  },
+});
+
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: { chainConfig },
 });
@@ -28,6 +52,8 @@ const web3auth = new Web3Auth({
   web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
   chainConfig,
   privateKeyProvider,
+  accountAbstractionProvider,
+  useAAWithExternalWallet: false
 });
 
 const authAdapter = new AuthAdapter({
@@ -44,8 +70,18 @@ const authAdapter = new AuthAdapter({
   });
 
   web3auth.configureAdapter(authAdapter);
+  // const walletClient = createWalletClient({
+  //   transport: custom(web3auth.provider as IProvider),
+  // });
+
+  const publicClient = createPublicClient({
+    chain: sepolia,
+    transport: http(),
+  });
 
   return {
     web3auth,
+    // walletClient,
+    publicClient,
   }
 }
