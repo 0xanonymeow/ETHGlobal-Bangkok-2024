@@ -35,8 +35,11 @@ export default function Component() {
             href="/"
             className="mr-6 hidden lg:flex"
           >
-            <MountainIcon className="h-6 w-6" />
-            <span className="sr-only">Acme Inc</span>
+            <img
+              src="https://ethglobal.b-cdn.net/events/cafe-tokyo/square-logo/default.png"
+              className="h-6 w-6"
+            />
+            <span className="sr-only">Splitly</span>
           </Link>
           <div className="grid gap-2 py-6">
             <Button variant="default">Login</Button>
@@ -47,8 +50,11 @@ export default function Component() {
         href="/"
         className="mr-6 hidden lg:flex"
       >
-        <MountainIcon className="h-6 w-6" />
-        <span className="sr-only">Acme Inc</span>
+        <img
+          src="https://ethglobal.b-cdn.net/events/cafe-tokyo/square-logo/default.png"
+          className="h-12 w-12"
+        />
+        <span className="sr-only">Splitly</span>
       </Link>
       <nav className="ml-auto hidden lg:flex gap-6">
         {isConnected && (
