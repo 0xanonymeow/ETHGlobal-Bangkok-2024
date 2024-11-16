@@ -1,14 +1,17 @@
 import { MenuItemX } from "@/data/menu";
 import { Button } from "../ui/button";
-import { useSetRecoilState } from "recoil";
-import { ordersStore } from "@/store";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { conversionRateStore, ordersStore } from "@/store";
 import { MenuItem } from "@/types";
+import { convertPrice } from "@/lib/utils";
+import { TokenIcon } from "@web3icons/react";
 
 type Props = {
   data: MenuItemX;
 };
 
 export default function MenuCard({ data }: Props) {
+  const conversionRate = useRecoilValue(conversionRateStore);
   const setOrders = useSetRecoilState(ordersStore);
 
   const addOrders = (item: MenuItem) => {
@@ -26,11 +29,18 @@ export default function MenuCard({ data }: Props) {
       </div>
 
       <div className="flex flex-col p-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-row justify-between items-center">
           <h3 className="text-2xl font-bold">{data.name}</h3>
-          <span className="text-xl font-semibold">
-            $ {data.cost.toString()}
-          </span>
+          <div className="flex items-center gap-1">
+            <TokenIcon
+              size={20}
+              symbol="usdc"
+              variant="branded"
+            />
+            <span className="text-xl font-semibold">
+              {convertPrice(conversionRate, 8, data.cost).toFixed(2)}
+            </span>
+          </div>
         </div>
 
         <p className="text-sm text-gray-500 mt-4">{data.desc}</p>

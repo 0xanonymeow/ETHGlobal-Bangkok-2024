@@ -5,11 +5,12 @@ import {
   TableBody,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  TableCell
 } from "@/components/ui/table";
 import config from "@/config";
 import { SPLITLY_ABI } from "@/data";
-import { ordersStore } from "@/store";
+import { conversionRateStore, ordersStore } from "@/store";
 import {
   aggregatedOrdersSelector,
   totalOrdersCostSelector
@@ -19,6 +20,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { decodeAbiParameters, getAddress, parseAbiParameters } from "viem";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useEffect } from "react";
+import { TokenIcon } from "@web3icons/react";
+import { convertPrice } from "@/lib/utils";
 
 export const Route = createLazyFileRoute("/orders")({
   component: OrdersRotue
@@ -27,6 +30,7 @@ export const Route = createLazyFileRoute("/orders")({
 function OrdersRotue() {
   const navigate = useNavigate();
 
+  const conversionRate = useRecoilValue(conversionRateStore);
   const [orders, setOrders] = useRecoilState(ordersStore);
   const aggregatedOrders = useRecoilValue(aggregatedOrdersSelector);
   const total = useRecoilValue(totalOrdersCostSelector);
@@ -97,19 +101,46 @@ function OrdersRotue() {
             {Object.values(aggregatedOrders).map((order, idx) => (
               <TableRow key={idx}>
                 <TableHead>{idx + 1}</TableHead>
-                <TableHead>
+                <TableCell>
                   <div className="flex flex-row items-center gap-2">
                     <span>{order.name}</span>
                     <Badge
                       variant="secondary"
                       className="text-foreground"
                     >
-                      ${order.cost}
+                      <div className="flex items-center gap-1">
+                        <TokenIcon
+                          size={16}
+                          symbol="usdc"
+                          variant="branded"
+                        />
+                        <span>
+                          {convertPrice(conversionRate, 8, order.cost).toFixed(
+                            2
+                          )}
+                        </span>
+                      </div>
                     </Badge>
                   </div>
-                </TableHead>
-                <TableHead>{order.count}</TableHead>
-                <TableHead>${order.cost * order.count}</TableHead>
+                </TableCell>
+                <TableCell>{order.count}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <TokenIcon
+                      size={16}
+                      symbol="usdc"
+                      variant="branded"
+                    />
+
+                    <span>
+                      {convertPrice(
+                        conversionRate,
+                        8,
+                        order.cost * order.count
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -117,8 +148,19 @@ function OrdersRotue() {
       </div>
 
       <div className="w-full flex flex-row items-center justify-between mt-6">
-        <span>
-          <h3 className="font-bold text-xl">Total: ${total}</h3>
+        <span className="flex items-center gap-1">
+          <h3 className="font-bold text-xl">Total: </h3>
+          <div className="flex items-center gap-1">
+            <TokenIcon
+              size={20}
+              symbol="usdc"
+              variant="branded"
+            />
+
+            <h3 className="font-bold text-xl">
+              {convertPrice(conversionRate, 8, total).toFixed(2)}
+            </h3>
+          </div>
         </span>
         <Button onClick={makeBilling}>💰 Make Billing</Button>
       </div>
