@@ -13,3 +13,8 @@ bracket_spacing = true
 
 [rpc_endpoints]
 local = "http://localhost:8545"
+arbitrum-sepolia = "${ARBITRUM_SEPOLIA_RPC_URL}"
+
+[etherscan]
+arbitrum-sepolia = { key = "${ARBITRUM_API_KEY}" }
+# forge script --chain arbitrum-sepolia DeployScript --rpc-url arbitrum-sepolia --broadcast --verify -vvvv
