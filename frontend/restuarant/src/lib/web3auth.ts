@@ -1,12 +1,14 @@
 import {
   CHAIN_NAMESPACES,
   CustomChainConfig,
-  WALLET_ADAPTERS,
+  IAdapter,
   WALLET_ADAPTER_TYPE,
+  WALLET_ADAPTERS,
   WEB3AUTH_NETWORK
 } from "@web3auth/base";
+import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { ModalConfig, Web3Auth } from "@web3auth/modal";
+import { ModalConfig, Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { WalletServicesPlugin } from "@web3auth/wallet-services-plugin";
 import { Web3AuthConnector } from "@web3auth/web3auth-wagmi-connector";
 import { Chain } from "wagmi/chains";
@@ -14,9 +16,10 @@ import { Chain } from "wagmi/chains";
 export default function Web3AuthConnectorInstance(chains: Chain[]) {
   // Create Web3Auth Instance
   const name = "Restuarant";
+  const chainId = "0x" + chains[0].id.toString(16);
   const chainConfig: CustomChainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x" + chains[0].id.toString(16),
+    chainId: chainId,
     rpcTarget: chains[0].rpcUrls.default.http[0], // This is the public RPC we have added, please pass on your own endpoint while creating an app
     displayName: chains[0].name,
     tickerName: chains[0].nativeCurrency?.name,
@@ -29,7 +32,7 @@ export default function Web3AuthConnectorInstance(chains: Chain[]) {
     config: { chainConfig }
   });
 
-  const web3AuthInstance = new Web3Auth({
+  const web3AuthConfig: Web3AuthOptions = {
     clientId:
       "BDCV6MvobnRBYhG_Pa6GPu5FaKQQyUTYcNX-IHr4NM4Y_n1HwjyR7urx2vzoemIe5Q9SN9aoTvDRLbOdFJllIzE",
     chainConfig,
@@ -46,6 +49,16 @@ export default function Web3AuthConnectorInstance(chains: Chain[]) {
     },
     web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
     enableLogging: true
+  };
+
+  const web3AuthInstance = new Web3Auth(web3AuthConfig);
+
+  const adapters = getDefaultExternalAdapters({
+    options: web3AuthConfig
+  });
+
+  adapters.forEach((adapter: IAdapter<unknown>) => {
+    web3AuthInstance.configureAdapter(adapter);
   });
 
   const walletServicesPlugin = new WalletServicesPlugin({

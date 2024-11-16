@@ -1,21 +1,25 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Web3AuthConnectorInstance from "@/lib/web3auth";
 import { ordersStore } from "@/store";
 import { Link } from "@tanstack/react-router";
 import { PropsWithChildren } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { arbitrumSepolia } from "wagmi/chains";
-import { BsCart2 } from "react-icons/bs";
 import { Badge } from "../ui/badge";
+import { RainbowButton } from "../ui/rainbow-button";
+import Web3AuthConnectorInstance from "@/lib/web3auth";
+import { arbitrumSepolia } from "viem/chains";
 
 export default function Component() {
+  const orders = useRecoilValue(ordersStore);
+
   const { isConnected } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
 
-  const orders = useRecoilValue(ordersStore);
+  const handleLogin = () => {
+    connect({ connector: Web3AuthConnectorInstance([arbitrumSepolia]) });
+  };
 
   return (
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
@@ -91,24 +95,12 @@ export default function Component() {
             Logout
           </Button>
         ) : (
-          <Button
-            className="w-32"
-            variant="default"
-            onClick={() =>
-              connect(
-                {
-                  connector: Web3AuthConnectorInstance([arbitrumSepolia])
-                },
-                {
-                  onSuccess: () => {
-                    console.log("success");
-                  }
-                }
-              )
-            }
+          <RainbowButton
+            className="w-44"
+            onClick={handleLogin}
           >
             🔐 Login
-          </Button>
+          </RainbowButton>
         )}
       </nav>
     </header>
@@ -147,25 +139,6 @@ function MenuIcon(props: PropsWithChildren<{ className: string }>) {
         y1="18"
         y2="18"
       />
-    </svg>
-  );
-}
-
-function MountainIcon(props: PropsWithChildren<{ className: string }>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
   );
 }
