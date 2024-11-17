@@ -10,7 +10,10 @@ function Index() {
 
   const onScan = (data: IDetectedBarcode[]) => {
     if (!data.length) return;
-    navigate({ to: "/detail/$id", params: { id: data[0].rawValue } });
+    navigate({
+      to: "/detail/$id",
+      params: { id: data[0].rawValue.replace("splitly://", "") }
+    });
   };
 
   return (
